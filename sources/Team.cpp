@@ -3,25 +3,94 @@
 using namespace std;
 using namespace ariel;
 
-
-Team::~Team()
+Team::~Team() 
 {
-    for (int i = 0; i < size; i++)
+    for (Character* member : team) 
     {
-        delete team[i];
-        team[i] = nullptr;
+        delete member;
     }
     size = 0;
+    leader = nullptr;
 }
-
 
 Team::Team(Character* leader):leader(leader), size(1)
 {
+    if (leader == nullptr) 
+    {
+        throw std::invalid_argument("Leader cannot be null");
+    }
     team[0] = leader;
     leader->setTeam(true);
-    for (int iter = 1; iter < 10; iter++)
+    for (size_t iter = 1; iter < 10; iter++)
         team[iter] = nullptr;
 }
+
+ Team::Team(const Team& other) : leader(other.leader), size(1)
+{
+    for (Character* member : other.team) 
+    {
+        if (Cowboy* cowboy = dynamic_cast<Cowboy*>(member)) 
+        {
+            Cowboy* aadCowboy = new Cowboy(*cowboy);
+            team[size++] = aadCowboy;
+        } 
+        else if (Ninja* ninja = dynamic_cast<Ninja*>(member)) 
+        {
+            Ninja* addNinja = new Ninja(*ninja);
+            team[size++] = addNinja;
+        }
+    }
+}
+
+Team& Team::operator=(const Team& other)
+{
+    if (this != &other) 
+    {
+        for (Character* member : team) 
+        {
+            delete member;
+        }
+        leader = other.leader;
+        size = 1;
+
+        for (Character* member : other.team) 
+        {
+            if (Cowboy* cowboy = dynamic_cast<Cowboy*>(member)) 
+            {
+                Cowboy* addCowboy = new Cowboy(*cowboy);
+                team[size++] = addCowboy;
+            } 
+            else if (Ninja* ninja = dynamic_cast<Ninja*>(member)) 
+            {
+                Ninja* addNinja = new Ninja(*ninja);
+                team[size++] = addNinja;
+            }
+        }
+    }
+    return *this;
+}
+
+Team::Team(Team&& other) noexcept : leader(other.leader), team(std::move(other.team))
+{
+    other.leader = nullptr;
+}
+
+Team& Team::operator=(Team&& other) noexcept
+{
+    if (this != &other) {
+        for (Character* member : team) 
+        {
+            delete member;
+        }
+
+        leader = other.leader;
+        team = std::move(other.team);
+
+        other.leader = nullptr;
+    }
+    return *this;
+}
+
 
 void Team::add(Character* some)
 {
@@ -43,7 +112,7 @@ void Team::add(Character* some)
 
 void Team::attack(Team* enemies)
 {
-    /*
+  /*  
     if(!(leader->isAlive()))
     {
         new_leader();
@@ -62,7 +131,7 @@ void Team::attack(Team* enemies)
     for(int i=0;i<2;i++)
     {
 
-        for(int j=0;j<2;j++)
+        for(size_t j=0;j<size;j++)
         {
             if(!enemy->isAlive())
             {
@@ -100,13 +169,13 @@ void Team::attack(Team* enemies)
 */
 }
 
-int Team::stillAlive()const
+size_t Team::stillAlive()const
 {
-    /*
-    int count = 0;
+  /*  
+    size_t count = 0;
     for(int i=0;i<2;i++)
     {
-        for(int j=0;j<size;j++)
+        for(size_t j=0;j<size;j++)
         {
             if(i == 0 && (dynamic_cast<Cowboy*>(team[j]) != nullptr) && team[j]->isAlive())
             {
@@ -137,16 +206,16 @@ void Team::new_leader()
 }
 double Team::the_enemy_distance(Team* enemy)
 {
-    int number = enemy->stillAlive();
+    size_t number = enemy->stillAlive();
     double distance_from_leader[enemy->stillAlive()];
-    for(int i=0;i<enemy->stillAlive();i++)
+    for(size_t i=0;i<enemy->stillAlive();i++)
     {
         distance_from_leader[i]=-1;
     }
-    int k =0;
+    size_t k =0;
     for(int i=0;i<2;i++)
     {
-        for(int j=0;j<enemy->size;j++)
+        for(size_t j=0;j<enemy->size;j++)
         {
             if((number > 0) && i == 0 && (dynamic_cast<Cowboy*>(enemy->team[j]) != nullptr) && enemy->team[j]->isAlive())
             {
@@ -176,7 +245,7 @@ Character** Team::the_victim(Team* enemy)
     
     for(int i=0;i<2;i++)
     {
-        for(int j=0;j<enemy->size;j++)
+        for(size_t j=0;j<enemy->size;j++)
         {
             if(i == 0 && (dynamic_cast<Cowboy*>(team[j]) != nullptr) && leader->distance(dynamic_cast<Cowboy*>(team[j])) == the_distance)
             {
@@ -193,14 +262,14 @@ Character** Team::the_victim(Team* enemy)
 
 void Team::print()const
 {
-    for(int i=0;i<size;i++)
+    for(size_t i=0;i<size;i++)
     {
         if(dynamic_cast<Cowboy*>(team[i]) != nullptr)
         {
             cout << team[i]->print() << endl;
         }
     }
-        for(int i=0;i<size;i++)
+        for(size_t i=0;i<size;i++)
     {
         if(dynamic_cast<Ninja*>(team[i]) != nullptr)
         {

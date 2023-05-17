@@ -5,14 +5,14 @@ namespace ariel
 {
     class Ninja:public Character
     {
-        protected:
+        private:
             int speed;
         public:
             Ninja(const Point& point, int hit, string name, int speed);
             void move(const Character * enemy);
+            int getSpeed()const{return speed;}
             void slash(Character * enemy)const;
-            virtual string print()const override;
-            //check operator =
+            string print()const override;
     };
     
 }

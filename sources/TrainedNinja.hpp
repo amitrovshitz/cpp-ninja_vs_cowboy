@@ -5,8 +5,8 @@ namespace ariel
 {
     class TrainedNinja:public Ninja
     {
+        static const int HIT = 120, SPEED = 12; 
         public:
-            TrainedNinja(string name,  const Point& point):Ninja(point, 120, name, 12){};
-
+            TrainedNinja(const string& name, const Point& point):Ninja(point, HIT, name, SPEED){}
     };
 }

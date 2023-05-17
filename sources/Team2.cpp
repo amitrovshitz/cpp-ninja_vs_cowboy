@@ -3,7 +3,7 @@
 using namespace std;
 using namespace ariel;
 
-int Team2::stillAlive()const
+size_t Team2::stillAlive()const
 {
     return 0;
 }

@@ -186,7 +186,7 @@ TEST_CASE("add-team.")
 	Team t1(c1), t2(c3);
 	CHECK_THROWS(t1.add(c1));
 	CHECK_THROWS(t1.add(c3));
-  CHECK_THROWS(t1.add(c2));
+  CHECK_NOTHROW(t1.add(c2));
 	CHECK_THROWS(t1.add(c1));
   CHECK_THROWS(t1.add(c2));
   CHECK_NOTHROW(t2.add(c4));

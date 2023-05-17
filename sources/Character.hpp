@@ -6,7 +6,7 @@ namespace ariel
 {
     class Character
     {
-        protected:
+        private:
             Point index;
             int hit_count;
             string name;
@@ -14,13 +14,19 @@ namespace ariel
 
         public:
             Character(const Point& index, int hit, string name);
-            virtual ~Character() {}//check
-            bool isAlive()const{return (hit_count > 0)? true : false;}
+            Character(const Character& other);
+            Character& operator=(const Character& other);
+            Character(Character&& other) noexcept;
+            Character& operator=(Character&& other) noexcept;
+            virtual ~Character() {}
+            bool isAlive()const{return (hit_count > 0);}
             double distance(const Character* other)const{return index.distance(other->index);}
             void hit(int value);
+            int getHit()const{return hit_count;}
             string getName()const{return name;}
             Point getLocation()const{return index;}
-            bool inTeam(){return have_a_team;}
+            void setLocation(const Point point){index = point;}
+            bool inTeam()const{return have_a_team;}
             void setTeam(bool team){have_a_team = team;}
             virtual string print()const=0;
     };
